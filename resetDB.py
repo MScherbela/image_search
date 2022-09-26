@@ -1,4 +1,5 @@
-from app import db, app
+from app import app
+from extensions import db
 import os
 from flask_security.utils import hash_password
 import datetime
