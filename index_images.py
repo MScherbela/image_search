@@ -71,6 +71,7 @@ def index_directory(directory, checkpoint_every=100, n_max=None):
     new_features = []
     skipped = 0
     processed = 0
+    errors = 0
     for i,fname in enumerate(all_fnames):
         fname_id = get_id(fname)
         if i % 10 == 0:
@@ -79,11 +80,15 @@ def index_directory(directory, checkpoint_every=100, n_max=None):
             continue
             skipped += 1
 
-        x = feature_calc.process_image(fname)
-        new_ids.append(fname_id)
-        new_features.append(x)
-        known_fnames[fname_id] = fname
-        processed += 1
+        try:
+            x = feature_calc.process_image(fname)
+            new_ids.append(fname_id)
+            new_features.append(x)
+            known_fnames[fname_id] = fname
+            processed += 1
+        except OSError: # PIL: OSError: image file is truncated
+            errors += 1
+            print(f"Error while processing: {fname}")
 
         if (processed > 0) and (processed % checkpoint_every) == 0:
             known_ids = known_ids + new_ids
