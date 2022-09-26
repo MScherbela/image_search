@@ -9,6 +9,7 @@ import uuid
 from index_images import FeatureCalculator, load_data, index_directory
 import numpy as np
 import os
+import os.path
 
 PHOTO_DIR = os.environ["PHOTO_DIR"]
 UPLOAD_DIR = os.environ["UPLOAD_DIR"]
@@ -56,7 +57,8 @@ def index():
     form = AddDataForm()
     if form.validate_on_submit():
         uploaded_img_fname = photo_uploads.save(form.photo.data)
-        closest_images = find_closest_images(UPLOAD_DIR + uploaded_img_fname)
+        print(f"Saving uploaded file: {uploaded_img_fname}")
+        closest_images = find_closest_images(os.path.join(UPLOAD_DIR, uploaded_img_fname))
     else:
         uploaded_img_fname = None
         closest_images = []
