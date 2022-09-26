@@ -2,7 +2,8 @@ import flask
 from extensions import scheduler, init_extensions, photo_uploads
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import SubmitField
+from wtforms import SubmitField, IntegerField
+from wtforms.validators import NumberRange
 from flask_security.decorators import login_required
 import PIL.Image, PIL.ImageOps
 import uuid
@@ -40,7 +41,8 @@ def find_closest_images(reference_img_fname, n=48):
 
 class AddDataForm(FlaskForm):
     photo = FileField("Photo to upload", validators=[FileAllowed(photo_uploads, 'Image only!'), FileRequired('File was empty!')])
-    submit = SubmitField("Upload")
+    n_similar = IntegerField("Number of photos", validators=[NumberRange(min=1, max=100)], default=6)
+    submit = SubmitField("Search for similar photos")
 
 
 # %% Scheduler tasks
@@ -57,8 +59,8 @@ def index():
     form = AddDataForm()
     if form.validate_on_submit():
         uploaded_img_fname = photo_uploads.save(form.photo.data)
-        print(f"Saving uploaded file: {uploaded_img_fname}")
-        closest_images = find_closest_images(os.path.join(UPLOAD_DIR, uploaded_img_fname))
+        n_similar = int(form.n_similar.data)
+        closest_images = find_closest_images(os.path.join(UPLOAD_DIR, uploaded_img_fname), n_similar)
     else:
         uploaded_img_fname = None
         closest_images = []

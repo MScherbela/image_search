@@ -6,12 +6,15 @@
         <div class="col">
             <h2>Source photo</h2>
             {% if uploaded_img is not none %}
-                <img src="/uploaded_img/{{ uploaded_img }}" class="img-fluid" alt="Responsive image">
+                <img src="/uploaded_img/{{ uploaded_img }}" class="img-fluid" alt="Responsive image" style="max-height: 500px">
             {% endif %}
             <form method="POST" action="/" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
                     {{ form.photo.label }} {{ form.photo(class_='form-control-file') }}
+                </div>
+                <div class="form-group">
+                    {{ form.n_similar.label }} {{ form.n_similar(class_='form-control') }}
                 </div>
                 {{ form.submit(class_='btn btn-primary') }}
             </form>
