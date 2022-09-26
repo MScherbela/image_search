@@ -103,6 +103,5 @@ def index_directory(directory, checkpoint_every=100, n_max=None):
 
 
 if __name__ == '__main__':
-    import os
     ids, features, fnames = index_directory(os.environ["PHOTO_DIR"], checkpoint_every=100)
 
