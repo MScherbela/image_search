@@ -14,7 +14,7 @@ with app.app_context():
     db.session.commit()
 
     user = user_datastore.create_user(email="michael.scherbela@gmail.com",
-                               password=hash_password("password"),
+                               password=hash_password(os.environ.get("ADMIN_PASSWORD"), "password"),
                                roles=['admin'])
     user.confirmed_at = datetime.datetime.now()
     db.session.commit()
