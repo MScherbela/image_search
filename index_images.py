@@ -34,7 +34,7 @@ class FeatureCalculator:
         self.params = self.model.init(key, dummy_img)
         self.TARGET_IMAGE_SIZE = 256
         if jit_fwd:
-            self.calculate_features = jax.jit(self._calculate_features, static_argnums=(0,))
+            self.calculate_features = jax.jit(self._calculate_features)
         else:
             self.calculate_features = self._calculate_features
 
@@ -103,5 +103,6 @@ def index_directory(directory, checkpoint_every=100, n_max=None):
 
 
 if __name__ == '__main__':
+    import os
     ids, features, fnames = index_directory(os.environ["PHOTO_DIR"], checkpoint_every=100)
 
