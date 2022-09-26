@@ -6,4 +6,4 @@ RUN apt-get -y install vim less
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-CMD ["gunicorn", "--bind", ":80", "--worker-tmp-dir", "/dev/shm", "--workers=1", "--threads=1", "app:app", "--timeout", "120"]
+CMD ["gunicorn", "--bind", ":80", "--worker-tmp-dir", "/dev/shm", "--workers=1", "--threads=1", "--timeout", "120", "app:app"]
