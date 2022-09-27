@@ -27,7 +27,7 @@ def save_data(ids, features, fnames):
         pickle.dump(dict(ids=ids, features=features, fnames=fnames), f)
 
 class FeatureCalculator:
-    def __init__(self, jit_fwd=True, max_jit_cache=5):
+    def __init__(self, jit_fwd=True, max_jit_cache=3):
         key = jax.random.PRNGKey(0)
         dummy_img = jnp.zeros([256, 256, 3])
         self.model = fm.ResNet101(output='activations', ckpt_dir="/data")
@@ -45,7 +45,7 @@ class FeatureCalculator:
             return
         if self.calculate_features._cache_size() > self.max_jit_cache:
             print("Clearing JIT cache")
-            self.calculate_features._clear_cache()
+            self.clear_backends()
 
     def process_image(self, fname):
         img = self._load_and_preprocess(fname)
