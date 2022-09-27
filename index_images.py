@@ -42,7 +42,7 @@ class FeatureCalculator:
     def process_image(self, fname):
         img = self._load_and_preprocess(fname)
         features = self.calculate_features(img)
-        del features  # Explicitly free memory
+        del img  # Explicitly free memory
         gc.collect()
         return features
 
