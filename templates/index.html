@@ -25,8 +25,11 @@
     <div class="row mt-5">
         {% for image in closest_images %}
             <div class="col-4 my-2">
-                <h5>{{ image[1] }}</h5>
                 <img src="/thumbnail/{{ image[0] }}" class="img-fluid" alt="Responsive image">
+                <h5>{{ image[2]['fname'] }}</h5>
+                <h5>{{ image[2]['model'] }}</h5>
+                <h5>{{ image[2]['date'] }}</h5>
+                <h5>Distance: {{ "{:.3f}".format(image[1]) }}</h5>
             </div>
         {% endfor %}
     </div>

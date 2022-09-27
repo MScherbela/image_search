@@ -16,3 +16,4 @@ jax
 jaxlib
 flaxmodels
 numpy
+exif

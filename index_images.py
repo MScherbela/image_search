@@ -114,7 +114,7 @@ def index_directory(directory, checkpoint_every=100, n_max=None):
         known_ids = known_ids + new_ids
         known_features = np.concatenate([known_features, np.stack(new_features, axis=0)], axis=0)
     save_data(known_ids, known_features, known_fnames)
-    print(f"Processed {processed} images, skipped {skipped} images.")
+    print(f"Processed {processed} images, skipped {skipped} images, errors on {errors} images.")
     return known_ids, known_features, known_fnames
 
 

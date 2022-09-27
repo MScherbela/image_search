@@ -11,6 +11,8 @@ from index_images import FeatureCalculator, load_data, index_directory
 import numpy as np
 import os
 import os.path
+import exif
+import datetime
 
 PHOTO_DIR = os.environ["PHOTO_DIR"]
 UPLOAD_DIR = os.environ["UPLOAD_DIR"]
@@ -37,7 +39,22 @@ def find_closest_images(reference_img_fname, n=48):
     x = feature_calc.process_image(reference_img_fname)
     dist = np.linalg.norm(x - photo_features, axis=1)
     ind_closest = np.argsort(dist)[:n]
-    return [(photo_ids[i], dist[i]) for i in ind_closest]
+    return [[photo_ids[i], dist[i], get_metadata(photo_fnames[photo_ids[i]])] for i in ind_closest]
+
+def get_metadata(fname):
+    try:
+        with open(fname, 'rb') as f:
+            img = exif.Image(f)
+        data = dict(fname=fname,
+                    model=img.get("model", ""),
+                    date=img.get("datetime_original"))
+    except Exception as e:
+        data = dict(fname="", model="", date="")
+
+    if data['date'] != "":
+        date = datetime.datetime.strptime(data['date'], "%Y:%m:%d %H:%M:%S")
+        data['date'] = "{:%d.%m.%Y, %H:%M}".format(date)
+    return data
 
 class AddDataForm(FlaskForm):
     photo = FileField("Photo to upload", validators=[FileAllowed(photo_uploads, 'Image only!'), FileRequired('File was empty!')])
