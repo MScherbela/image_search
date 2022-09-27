@@ -8,7 +8,6 @@ from PIL import Image, ImageOps
 import pathlib
 import hashlib
 import os
-import gc
 
 DATA_FNAME = "/data/features.pkl"
 ALLOWED_FILETYPES = ['.jpg', '.jpeg']
@@ -28,22 +27,29 @@ def save_data(ids, features, fnames):
         pickle.dump(dict(ids=ids, features=features, fnames=fnames), f)
 
 class FeatureCalculator:
-    def __init__(self, jit_fwd=True):
+    def __init__(self, jit_fwd=True, max_jit_cache=5):
         key = jax.random.PRNGKey(0)
         dummy_img = jnp.zeros([256, 256, 3])
         self.model = fm.ResNet101(output='activations', ckpt_dir="/data")
         self.params = self.model.init(key, dummy_img)
         self.TARGET_IMAGE_SIZE = 256
+        self.max_jit_cache = max_jit_cache
+        self.jit_fwd = jit_fwd
         if jit_fwd:
             self.calculate_features = jax.jit(self._calculate_features)
         else:
             self.calculate_features = self._calculate_features
 
+    def _clear_jit_cache_if_required(self):
+        if not self.jit_fwd:
+            return
+        if self.calculate_features._cache_size() > self.max_jit_cache:
+            self.calculate_features._clear_cache()
+
     def process_image(self, fname):
         img = self._load_and_preprocess(fname)
+        self._clear_jit_cache_if_required()
         features = self.calculate_features(img)
-        del img  # Explicitly free memory
-        gc.collect()
         return features
 
     def _calculate_features(self, img):
