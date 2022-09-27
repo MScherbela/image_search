@@ -45,7 +45,7 @@ class FeatureCalculator:
             return
         if self.calculate_features._cache_size() > self.max_jit_cache:
             print("Clearing JIT cache")
-            self.clear_backends()
+            jax.clear_backends()
 
     def process_image(self, fname):
         img = self._load_and_preprocess(fname)
