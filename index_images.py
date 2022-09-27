@@ -44,6 +44,7 @@ class FeatureCalculator:
         if not self.jit_fwd:
             return
         if self.calculate_features._cache_size() > self.max_jit_cache:
+            print("Clearing JIT cache")
             self.calculate_features._clear_cache()
 
     def process_image(self, fname):
