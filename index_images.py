@@ -8,6 +8,7 @@ from PIL import Image, ImageOps
 import pathlib
 import hashlib
 import os
+import gc
 
 DATA_FNAME = "/data/features.pkl"
 ALLOWED_FILETYPES = ['.jpg', '.jpeg']
@@ -40,7 +41,10 @@ class FeatureCalculator:
 
     def process_image(self, fname):
         img = self._load_and_preprocess(fname)
-        return self.calculate_features(img)
+        features = self.calculate_features(img)
+        del features  # Explicitly free memory
+        gc.collect()
+        return features
 
     def _calculate_features(self, img):
         activations = self.model.apply(self.params, img, train=False)
